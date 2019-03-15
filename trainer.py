@@ -75,10 +75,10 @@ def dataparallel(model, ngpus, gpu0=0):
 class Trainer(object):
     def __init__(self, opt):
         self.opt = opt
-        self.netG = _netG(opt.basis_num, opt.embedding_dim, opt.nz, opt.ngf, opt.nc)
-        self.netD = _netD(opt.nc, opt.ndf)
-        self.encoder = _encoder(opt.nc, opt.ndf, opt.embedding_dim)
-        self.decoder = _decoder(opt.nc, opt.ngf, opt.embedding_dim)
+        self.netG = model_define._netG(opt.basis_num, opt.embedding_dim, opt.nz, opt.ngf, opt.nc)
+        self.netD = model_define._netD(opt.nc, opt.ndf)
+        self.encoder = model_define._encoder(opt.nc, opt.ndf, opt.embedding_dim)
+        self.decoder = model_define._decoder(opt.nc, opt.ngf, opt.embedding_dim)
         self.learnBasis = nn.Linear(self.opt.basis_num, self.opt.embedding_dim, bias=False)
         self.learnCoeff = nn.Linear(self.opt.basis_num, self.opt.batchSize_s2, bias=False)
         self.dataloader = torch.utils.data.DataLoader(createDataSet(self.opt, self.opt.imageSize),
