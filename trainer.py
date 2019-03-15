@@ -31,7 +31,7 @@ if torch.cuda.is_available() and not opt.cuda:
 
 
 def createDataSet(opt, imageSize):
-    if opt.dataset in ['oxford-192', 'celebA', 'lsun']:
+    if opt.dataset in ['oxford-192', 'celebA', 'lsun','cifar10']:
         # folder dataset
         dataset = dset.ImageFolder(root=opt.dataroot,
                                    transform=transforms.Compose([
