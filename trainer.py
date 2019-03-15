@@ -75,13 +75,13 @@ def dataparallel(model, ngpus, gpu0=0):
 class Trainer(object):
     def __init__(self, opt):
         self.opt = opt
-        self.netG = _netG(opt.basis_num, opt.embedding_dim, opt.nz, opt.ngf, opt.nc)
-        self.netD = _netD(opt.nc, opt.ndf)
-        self.encoder = _encoder(opt.nc, opt.ndf, opt.embedding_dim)
-        self.decoder = _decoder(opt.nc, opt.ngf, opt.embedding_dim)
+        self.netG = model_define._netG(opt.basis_num, opt.embedding_dim, opt.nz, opt.ngf, opt.nc)
+        self.netD = model_define._netD(opt.nc, opt.ndf)
+        self.encoder = model_define._encoder(opt.nc, opt.ndf, opt.embedding_dim)
+        self.decoder = model_define._decoder(opt.nc, opt.ngf, opt.embedding_dim)
         self.learnBasis = nn.Linear(self.opt.basis_num, self.opt.embedding_dim, bias=False)
         self.learnCoeff = nn.Linear(self.opt.basis_num, self.opt.batchSize_s2, bias=False)
-        self.dataloader = torch.utils.data.DataLoader(createDataSet(self.opt, self.opt.imageSize), 
+        self.dataloader = torch.utils.data.DataLoader(createDataSet(self.opt, self.opt.imageSize),
             batch_size=self.opt.batchSize_s1,
             shuffle=True, num_workers=int(self.opt.workers))
 
@@ -96,7 +96,7 @@ class Trainer(object):
         self.optimizerDecoder = optim.Adam(self.decoder.parameters(), lr=opt.s1_lr, betas=(opt.beta1, opt.beta2))
         self.optimizerBasis = optim.Adam(self.learnBasis.parameters(), lr=opt.s2_lr, betas=(opt.beta1, opt.beta2))
         self.optimizerCoeff = optim.Adam(self.learnCoeff.parameters(), lr=opt.s2_lr, betas=(opt.beta1, opt.beta2))
-        
+
         # some variables
         real_img = torch.FloatTensor(opt.batchSize_s1, opt.nc, opt.imageSize, opt.imageSize)
         label = torch.FloatTensor(opt.batchSize_s3)
@@ -127,7 +127,7 @@ class Trainer(object):
         assert(batch_size == lcc_coding.size(0))
         assert(embedding_dim == basis.size(1))
         assert(basis_num == lcc_coding.size(1))
-        # compute loss-1 and loss-3 
+        # compute loss-1 and loss-3
         l1 = self.criterion_l2(recoverd, latent)
         l3 = self.criterion_l2(basis, torch.zeros_like(basis).cuda())
         # compute loss-2: local loss
@@ -169,7 +169,7 @@ class Trainer(object):
         s2_batchSize = self.opt.batchSize_s2
         s2_basis_iters = 10
         s2_coeff_iters = 10
-        self.dataloader = torch.utils.data.DataLoader(createDataSet(self.opt, self.opt.imageSize), 
+        self.dataloader = torch.utils.data.DataLoader(createDataSet(self.opt, self.opt.imageSize),
             batch_size=s2_batchSize,
             shuffle=True, num_workers=int(self.opt.workers))
         for epoch in range(self.opt.niter2):
@@ -190,8 +190,8 @@ class Trainer(object):
                     ############################
                     self.learnBasis.eval()
                     self.learnCoeff.train()
-                    # basis_T: embedding_dim x basis_num 
-                    basis_T = self.learnBasis.weight.detach() 
+                    # basis_T: embedding_dim x basis_num
+                    basis_T = self.learnBasis.weight.detach()
                     for j in range(s2_coeff_iters):
                         self.learnCoeff.zero_grad()
                         output = self.learnCoeff(basis_T).transpose(0,1).contiguous()
@@ -221,7 +221,7 @@ class Trainer(object):
         ############################
         s3_batchSize = self.opt.batchSize_s3
         self.netG.reset_basis(self.learnBasis.weight.transpose(0,1).contiguous())
-        self.dataloader = torch.utils.data.DataLoader(createDataSet(self.opt, self.opt.imageSize), 
+        self.dataloader = torch.utils.data.DataLoader(createDataSet(self.opt, self.opt.imageSize),
             batch_size=s3_batchSize*self.opt.criticIters,
             shuffle=True, num_workers=int(self.opt.workers))
         counter_s3 = 0
