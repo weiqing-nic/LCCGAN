@@ -13,7 +13,7 @@ import torchvision.transforms as transforms
 import torchvision.utils as vutils
 from torch.autograd import Variable
 import torch.nn.functional as F
-from model_define import _netG,_netD
+from model_define import _netG,_netD,_encoder,lcc_sampling
 import numpy as np
 
 
