@@ -23,6 +23,7 @@ print("Random Seed: ", opt.manualSeed)
 random.seed(opt.manualSeed)
 torch.manual_seed(opt.manualSeed)
 if opt.cuda:
+    opt.gpu = 0
     torch.cuda.set_device(opt.gpu)
     torch.cuda.manual_seed_all(opt.manualSeed)
 cudnn.benchmark = True
