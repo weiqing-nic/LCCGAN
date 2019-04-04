@@ -63,11 +63,12 @@ def dataparallel(model, ngpus, gpu0=0):
     gpu_list = list(range(gpu0, gpu0+ngpus))
     assert torch.cuda.device_count() >= gpu0+ngpus, "Invalid Number of GPUs"
     if isinstance(model, list):
-        for i in range(len(model)):
-            if ngpus >= 2:
+        if ngpus >= 2:
+            for i in range(len(model)):
                 if not isinstance(model[i], nn.DataParallel):
                     model[i] = torch.nn.DataParallel(model[i], gpu_list).cuda()
-            else:
+        else:
+            for i in range(len(model)):
                 model[i] = model[i].cuda()
     else:
         if ngpus >= 2:
@@ -124,6 +125,7 @@ class Trainer(object):
         self.real_img = Variable(real_img)
         self.label = Variable(label)
         self.batchSize = self.opt.batchSize_s1
+        print("Init Successful")
 
 
     def cal_local_loss(self, recoverd, latent, basis, lcc_coding):
