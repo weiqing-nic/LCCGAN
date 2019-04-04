@@ -1,5 +1,10 @@
 # LCCGAN
 
+Download Oxford: `axel -n 64 http://www.robots.ox.ac.uk/~vgg/data/flowers/102/102flowers.tgz`
+
+CPU for Oxford: `python trainer.py --dataset oxford-192 --dataroot 102flowers --imageSize 64`
+
+
 Pytorch implementation for “Adversarial Learning with Local Coordinate Coding”.
 
 <!-- 
