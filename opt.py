@@ -32,7 +32,7 @@ parser.add_argument('--ngf', type=int, default=64, help='feature number of gener
 parser.add_argument('--ndf', type=int, default=64, help='feature number of discriminator')
 
 # general settings
-parser.add_argument('--cuda', default=True, action='store_true', help='enables cuda')
+parser.add_argument('--cuda', default=False, action='store_true', help='enables cuda')
 parser.add_argument('--ngpu', type=int, default=1, help='number of GPUs to use')
 parser.add_argument('--gpu', type=int, default=1, help='number of GPUs to use')
 parser.add_argument('--outf', default='.', help='folder to output images and model checkpoints')

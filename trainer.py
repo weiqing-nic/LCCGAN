@@ -15,23 +15,26 @@ from torch.autograd import Variable
 import torch.nn.functional as F
 from model_define import _netG,_netD,_encoder,lcc_sampling,_decoder
 import numpy as np
-
+from tqdm import tqdm
 
 if opt.manualSeed is None:
     opt.manualSeed = random.randint(1, 10000)
 print("Random Seed: ", opt.manualSeed)
 random.seed(opt.manualSeed)
 torch.manual_seed(opt.manualSeed)
+print(opt.cuda)
 if opt.cuda:
     opt.gpu = 0
     torch.cuda.set_device(opt.gpu)
     torch.cuda.manual_seed_all(opt.manualSeed)
+
 cudnn.benchmark = True
 if torch.cuda.is_available() and not opt.cuda:
     print("WARNING: You have a CUDA device, so you should probably run with --cuda")
 
 
 def createDataSet(opt, imageSize):
+    print("Loading Dataset")
     if opt.dataset in ['oxford-192', 'celebA', 'lsun','cifar10']:
         # folder dataset
         dataset = dset.ImageFolder(root=opt.dataroot,
@@ -66,11 +69,12 @@ def dataparallel(model, ngpus, gpu0=0):
     gpu_list = list(range(gpu0, gpu0+ngpus))
     assert torch.cuda.device_count() >= gpu0+ngpus, "Invalid Number of GPUs"
     if isinstance(model, list):
-        for i in range(len(model)):
-            if ngpus >= 2:
+        if ngpus >= 2:
+            for i in range(len(model)):
                 if not isinstance(model[i], nn.DataParallel):
                     model[i] = torch.nn.DataParallel(model[i], gpu_list).cuda()
-            else:
+        else:
+            for i in range(len(model)):
                 model[i] = model[i].cuda()
     else:
         if ngpus >= 2:
@@ -83,6 +87,14 @@ def dataparallel(model, ngpus, gpu0=0):
 
 class Trainer(object):
     def __init__(self, opt):
+
+        # Some hack, ERIC HAN
+        try:
+            os.makedirs("output")
+        except OSError:
+            pass
+
+
         self.opt = opt
         self.netG = _netG(opt.basis_num, opt.embedding_dim, opt.nz, opt.ngf, opt.nc)
         self.netD = _netD(opt.nc, opt.ndf)
@@ -111,9 +123,9 @@ class Trainer(object):
         label = torch.FloatTensor(opt.batchSize_s3)
         self.one = torch.FloatTensor([1])
         self.mone = self.one * -1
-        self.one = self.one.cuda()
-        self.mone = self.mone.cuda()
         if opt.cuda:
+            self.one = self.one.cuda()
+            self.mone = self.mone.cuda()
             real_img, label = real_img.cuda(), label.cuda()
             self.netD = dataparallel(self.netD, opt.ngpu, opt.gpu)
             self.netG = dataparallel(self.netG, opt.ngpu, opt.gpu)
@@ -127,7 +139,7 @@ class Trainer(object):
         self.real_img = Variable(real_img)
         self.label = Variable(label)
         self.batchSize = self.opt.batchSize_s1
-
+        print("Init Successful")
 
     def cal_local_loss(self, recoverd, latent, basis, lcc_coding):
         batch_size = latent.size(0)
@@ -151,12 +163,13 @@ class Trainer(object):
 
 
     def train(self):
+
         self.real_label = 1
         self.fake_label = 0
         ############################
         # Stage1: Autoencoder
         ############################
-        for epoch in range(self.opt.niter1):
+        for epoch in tqdm(range(self.opt.niter1), desc="Stage 1"):
             for i, data in enumerate(self.dataloader, 0):
                 real_cpu, _ = data
                 batch_size = real_cpu.size(0)
@@ -172,7 +185,7 @@ class Trainer(object):
                 errRS.backward()
                 self.optimizerEncoder.step()
                 self.optimizerDecoder.step()
-
+        print("Stage 2")
         ############################
         # Stage2: Train LCC
         ############################
@@ -183,7 +196,7 @@ class Trainer(object):
         self.dataloader = torch.utils.data.DataLoader(createDataSet(self.opt, self.opt.imageSize),
             batch_size=s2_batchSize,
             shuffle=True, num_workers=int(self.opt.workers))
-        for epoch in range(self.opt.niter2):
+        for epoch in tqdm(range(self.opt.niter2), desc="Stage 2"):
             for i, data in enumerate(self.dataloader, 0):
                 real_cpu, _ = data
                 batch_size = real_cpu.size(0)
@@ -226,7 +239,6 @@ class Trainer(object):
                         loss_basis = self.cal_local_loss(output, latent, basis, lcc_coding)
                         loss_basis.backward()
                         self.optimizerBasis.step()
-
         ############################
         # Stage3: Training GAN
         ############################
@@ -236,7 +248,12 @@ class Trainer(object):
             batch_size=s3_batchSize*self.opt.criticIters,
             shuffle=True, num_workers=int(self.opt.workers))
         counter_s3 = 0
-        for epoch in range(self.opt.niter3):
+        # some hack, Eric Han
+        #batch_size = real_cpu.size(0)
+        #fixed_noise = torch.randn(batch_size, self.opt.nz, 1, 1)
+        #fixed_noise = fixed_noise.cuda()
+        #fixed_noisev = autograd.Variable(fixed_noise)
+        for epoch in tqdm(range(self.opt.niter3), desc="Stage 3"):
             for i, data in enumerate(self.dataloader, 0):
                 counter_s3 = counter_s3 + 1
                 self.netG.train()
@@ -256,6 +273,7 @@ class Trainer(object):
                 errD_real.backward()
                 D_x = output.data.mean()
                 # train with fake
+                print(batch_size)
                 noise = torch.randn(batch_size, self.opt.nz)
                 noise = noise.cuda()
                 noisev = autograd.Variable(noise)
@@ -278,6 +296,17 @@ class Trainer(object):
                 D_G_z2 = output.data.mean()
                 self.optimizerG.step()
 
+                if i % 100 == 0:
+                    #vutils.save_image(self.real_img,
+                    #        'output/real_samples.png',
+                    #        normalize=True)
+                    vutils.save_image(fake.detach(),
+                            'output/fake_samples_epoch_%03d.png' % epoch,
+                            normalize=True)
+                    #fake = self.netG(fixed_noisev)
+                    #vutils.save_image(fake.detach(),
+                    #        'output/fake_samples_epoch_%03d.png' % epoch,
+                    #        normalize=True)
 
 if __name__ == '__main__':
     trainer = Trainer(opt)
