@@ -49,6 +49,14 @@ def createDataSet(opt, imageSize):
                                    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
                                ])
         )
+    elif opt.dataset == 'cifar10':
+        dataset = dset.CIFAR10(root=opt.dataroot, download=True,
+                               transform=transforms.Compose([
+                                   transforms.Scale(imageSize),
+                                   transforms.ToTensor(),
+                                   transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+                               ])
+        )
     return dataset
 
 
@@ -153,6 +161,7 @@ class Trainer(object):
                 real_cpu, _ = data
                 batch_size = real_cpu.size(0)
                 if batch_size < opt.batchSize_s1:
+                    print("hello")
                     break
                 self.real_img.data.resize_(real_cpu.size()).copy_(real_cpu)
                 self.encoder.zero_grad()
