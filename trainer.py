@@ -17,7 +17,6 @@ from model_define import _netG,_netD,_encoder,lcc_sampling,_decoder
 import numpy as np
 from tqdm import tqdm
 
-
 if opt.manualSeed is None:
     opt.manualSeed = random.randint(1, 10000)
 print("Random Seed: ", opt.manualSeed)
@@ -81,6 +80,14 @@ def dataparallel(model, ngpus, gpu0=0):
 
 class Trainer(object):
     def __init__(self, opt):
+        
+        # Some hack, ERIC HAN
+        try:
+            os.makedirs("output")
+        except OSError:
+            pass
+
+    
         self.opt = opt
         self.netG = _netG(opt.basis_num, opt.embedding_dim, opt.nz, opt.ngf, opt.nc)
         self.netD = _netD(opt.nc, opt.ndf)
@@ -127,7 +134,6 @@ class Trainer(object):
         self.batchSize = self.opt.batchSize_s1
         print("Init Successful")
 
-
     def cal_local_loss(self, recoverd, latent, basis, lcc_coding):
         batch_size = latent.size(0)
         embedding_dim = latent.size(1)
@@ -150,6 +156,7 @@ class Trainer(object):
 
 
     def train(self):
+
         self.real_label = 1
         self.fake_label = 0
         ############################
@@ -233,6 +240,11 @@ class Trainer(object):
             batch_size=s3_batchSize*self.opt.criticIters,
             shuffle=True, num_workers=int(self.opt.workers))
         counter_s3 = 0
+        # some hack, Eric Han
+        #batch_size = real_cpu.size(0)
+        #fixed_noise = torch.randn(batch_size, self.opt.nz, 1, 1)
+        #fixed_noise = fixed_noise.cuda()
+        #fixed_noisev = autograd.Variable(fixed_noise)
         for epoch in tqdm(range(self.opt.niter3), desc="Stage 3"):
             for i, data in enumerate(self.dataloader, 0):
                 counter_s3 = counter_s3 + 1
@@ -253,6 +265,7 @@ class Trainer(object):
                 errD_real.backward()
                 D_x = output.data.mean()
                 # train with fake
+                print(batch_size)
                 noise = torch.randn(batch_size, self.opt.nz)
                 noise = noise.cuda()
                 noisev = autograd.Variable(noise)
@@ -274,7 +287,18 @@ class Trainer(object):
                 errG.backward()
                 D_G_z2 = output.data.mean()
                 self.optimizerG.step()
-
+                
+                if i % 100 == 0:
+                    #vutils.save_image(self.real_img,
+                    #        'output/real_samples.png',
+                    #        normalize=True)
+                    vutils.save_image(fake.detach(),
+                            'output/fake_samples_epoch_%03d.png' % epoch,
+                            normalize=True)
+                    #fake = self.netG(fixed_noisev)
+                    #vutils.save_image(fake.detach(),
+                    #        'output/fake_samples_epoch_%03d.png' % epoch,
+                    #        normalize=True)
 
 if __name__ == '__main__':
     trainer = Trainer(opt)
