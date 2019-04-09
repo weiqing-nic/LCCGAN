@@ -297,9 +297,9 @@ class Trainer(object):
                 self.optimizerG.step()
 
                 model = self.netG
-                model2 = self._netD
-                model3 = self._encoder
-                model4 = self._decoder
+                model2 = self.netD
+                model3 = self.encoder
+                model4 = self.decoder
 
                 pathsss = os.getcwd()
                 oldpath = pathsss
