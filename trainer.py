@@ -296,7 +296,38 @@ class Trainer(object):
                 D_G_z2 = output.data.mean()
                 self.optimizerG.step()
 
+                model = self.netG
+                model2 = self._netD
+                model3 = self._encoder
+                model4 = self._decoder
+
+                pathsss = os.getcwd()
+                oldpath = pathsss
+                pathsss = oldpath +'generator.pth'
+                pathss2 = oldpath +'discriminator.pth'
+                pathss3 = oldpath +'_encoder.pth'
+                pathss4 = oldpath +'_decoder.pth'
+                torch.save(model,pathsss)
+                torch.save(model2,pathss2)
+                torch.save(model3,pathss3)
+                torch.save(model4,pathss4)
+
                 if i % 100 == 0:
+                    model = self.netG
+                    model2 = self._netD
+                    model3 = self._encoder
+                    model4 = self._decoder
+
+                    pathsss = os.getcwd()
+                    oldpath = pathsss
+                    pathsss = oldpath +'generator.pth'
+                    pathss2 = oldpath +'discriminator.pth'
+                    pathss3 = oldpath +'_encoder.pth'
+                    pathss4 = oldpath +'_decoder.pth'
+                    torch.save(model,pathsss)
+                    torch.save(model2,pathss2)
+                    torch.save(model3,pathss3)
+                    torch.save(model4,pathss4)
                     #vutils.save_image(self.real_img,
                     #        'output/real_samples.png',
                     #        normalize=True)
