@@ -273,7 +273,7 @@ class Trainer(object):
                 errD_real.backward()
                 D_x = output.data.mean()
                 # train with fake
-                print(batch_size)
+                #print(batch_size)
                 noise = torch.randn(batch_size, self.opt.nz)
                 noise = noise.cuda()
                 noisev = autograd.Variable(noise)
