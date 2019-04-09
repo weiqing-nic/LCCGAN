@@ -298,8 +298,13 @@ class Trainer(object):
 
                 model = self.netG
                 model2 = self.netD
+<<<<<<< HEAD
                 model3 = self.encoder
                 model4 = self.decoder
+=======
+                model3 = self._encoder
+                model4 = self._decoder
+>>>>>>> d600dd20b61c946c52e8eb1f811b838a1adc5535
 
                 pathsss = os.getcwd()
                 oldpath = pathsss
