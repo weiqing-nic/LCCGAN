@@ -292,7 +292,7 @@ class Trainer(object):
                 self.label.data.fill_(1)  # fake labels are real for generator cost
                 output = self.netD(fake)
                 for vh in self.label:
-                    print(vhh)
+                    print(vh)
                 errG = self.criterion_bce(output, self.label)
                 errG.backward()
                 D_G_z2 = output.data.mean()
