@@ -324,7 +324,7 @@ class Trainer(object):
 
                     vt = int(epoch)
 
-                    if (vt == 99):
+                    if (vt == 1):
 
                         pathsss = os.getcwd()
                         oldpath = pathsss
