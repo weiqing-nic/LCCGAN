@@ -282,6 +282,7 @@ class Trainer(object):
                 output = self.netD(fake.detach())
                 print(self.label.data.fill_(1))
                 print(self.label)
+                print(output)
                 errD_fake = self.criterion_bce(output, self.label)
                 errD_fake.backward()
                 D_G_z1 = output.data.mean()
