@@ -280,6 +280,8 @@ class Trainer(object):
                 fake = self.netG(noisev)
                 self.label.data.resize_(batch_size).fill_(0)
                 output = self.netD(fake.detach())
+                print(self.label.data.fill_(1))
+                print(self.label)
                 errD_fake = self.criterion_bce(output, self.label)
                 errD_fake.backward()
                 D_G_z1 = output.data.mean()
@@ -291,7 +293,7 @@ class Trainer(object):
                 self.netG.zero_grad()
                 self.label.data.fill_(1)  # fake labels are real for generator cost
                 output = self.netD(fake)
-                print(self.label.data.fill_(1))
+
                 errG = self.criterion_bce(output, self.label)
                 errG.backward()
                 D_G_z2 = output.data.mean()
