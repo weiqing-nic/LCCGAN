@@ -291,7 +291,7 @@ class Trainer(object):
                 self.netG.zero_grad()
                 self.label.data.fill_(1)  # fake labels are real for generator cost
                 output = self.netD(fake)
-                for vh in self.label:
+                for vh in self.label.data:
                     print(vh)
                 errG = self.criterion_bce(output, self.label)
                 errG.backward()
