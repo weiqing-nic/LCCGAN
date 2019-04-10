@@ -322,7 +322,9 @@ class Trainer(object):
                     model3 = self.encoder
                     model4 = self.decoder
 
-                    if (epoch == 99):
+                    vt = int(epoch)
+
+                    if (vt == 99):
 
                         pathsss = os.getcwd()
                         oldpath = pathsss
