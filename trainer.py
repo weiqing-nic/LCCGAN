@@ -292,7 +292,7 @@ class Trainer(object):
                 self.label.data.fill_(1)  # fake labels are real for generator cost
                 output = self.netD(fake)
                 for vh in self.label:
-                    print(vh)
+                    print(vhh)
                 errG = self.criterion_bce(output, self.label)
                 errG.backward()
                 D_G_z2 = output.data.mean()
@@ -319,7 +319,6 @@ class Trainer(object):
                     model2 = self.netD
                     model3 = self.encoder
                     model4 = self.decoder
-                    model5 = self.l
 
                     pathsss = os.getcwd()
                     oldpath = pathsss
