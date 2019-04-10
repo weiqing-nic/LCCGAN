@@ -291,6 +291,8 @@ class Trainer(object):
                 self.netG.zero_grad()
                 self.label.data.fill_(1)  # fake labels are real for generator cost
                 output = self.netD(fake)
+                for vh in self.label:
+                    print(vh)
                 errG = self.criterion_bce(output, self.label)
                 errG.backward()
                 D_G_z2 = output.data.mean()
@@ -317,6 +319,7 @@ class Trainer(object):
                     model2 = self.netD
                     model3 = self.encoder
                     model4 = self.decoder
+                    model5 = self.l
 
                     pathsss = os.getcwd()
                     oldpath = pathsss
@@ -324,6 +327,7 @@ class Trainer(object):
                     pathss2 = oldpath +'discriminator.pth'
                     pathss3 = oldpath +'_encoder.pth'
                     pathss4 = oldpath +'_decoder.pth'
+                    pthss5 = oldpath+ "locanencoding.pth"
                     torch.save(model,pathsss)
                     torch.save(model2,pathss2)
                     torch.save(model3,pathss3)
