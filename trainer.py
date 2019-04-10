@@ -322,17 +322,19 @@ class Trainer(object):
                     model3 = self.encoder
                     model4 = self.decoder
 
-                    pathsss = os.getcwd()
-                    oldpath = pathsss
-                    pathsss = oldpath +'generator.pth'
-                    pathss2 = oldpath +'discriminator.pth'
-                    pathss3 = oldpath +'_encoder.pth'
-                    pathss4 = oldpath +'_decoder.pth'
-                    pthss5 = oldpath+ "locanencoding.pth"
-                    torch.save(model,pathsss)
-                    torch.save(model2,pathss2)
-                    torch.save(model3,pathss3)
-                    torch.save(model4,pathss4)
+                    if (epoch == 99):
+
+                        pathsss = os.getcwd()
+                        oldpath = pathsss
+                        pathsss = oldpath +'generator.pth'
+                        pathss2 = oldpath +'discriminator.pth'
+                        pathss3 = oldpath +'_encoder.pth'
+                        pathss4 = oldpath +'_decoder.pth'
+                        pthss5 = oldpath+ "locanencoding.pth"
+                        torch.save(model,pathsss)
+                        torch.save(model2,pathss2)
+                        torch.save(model3,pathss3)
+                        torch.save(model4,pathss4)
                     #vutils.save_image(self.real_img,
                     #        'output/real_samples.png',
                     #        normalize=True)
