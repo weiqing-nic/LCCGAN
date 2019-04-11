@@ -401,7 +401,7 @@ class Trainer(object):
                         #     new_fake[v,:,:,:] = vvh
                         #     v = v + 1
 
-                        new_image = torch.nn.functional.interpolate(fake ,size=(3,32,32), mode='bilinear')
+                        new_image = torch.nn.functional.interpolate(fake ,size=(32,32), mode='bilinear')
 
                         print(new_image.shape)
 
