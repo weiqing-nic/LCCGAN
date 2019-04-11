@@ -371,7 +371,7 @@ class Trainer(object):
                         for i in fake:
                             print("inside")
                             print(i.shape)
-                            new_fake[v,:,:,:] =torchvision.transforms.Resize(fake,(32,32))
+                            new_fake[v,:,:,:] = torch.nn.upsampling(i,(32,32))
                             v = v + 1
 
 
