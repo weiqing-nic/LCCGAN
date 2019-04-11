@@ -357,12 +357,15 @@ class Trainer(object):
                         #vutils.save_image(self.real_img,
                         #        'output/real_samples.png',
                         #        normalize=True)
+                        lis = []
+
+                        for i in fake:
+                            i = torch.nn.functional.interpolate(fake, size=(32,32), scale_factor=None, mode='nearest', align_corners=None)
+                            lis.append(i)
 
 
-                        torch.nn.functional.interpolate(fake, size=(32,32), scale_factor=None, mode='nearest', align_corners=None)
 
-
-                        vutils.save_image(fake.detach(),
+                        vutils.save_image(lis,
                                     'output/fake_samples_epoch_%03_%03d.png' % epoch,
                                     normalize=True)
                         #fake = self.netG(fixed_noisev)
