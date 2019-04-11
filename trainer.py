@@ -389,17 +389,24 @@ class Trainer(object):
 
 
                         #for i in fake.detach():
-                        for i in fake:
-                            print("inside")
-                            print(i.shape)
-                            vvh = torch.nn.functional.interpolate(i,size=(32,32), mode='linear')
-                            print(type(vvh))
-                            print(vvh.shape)
-                            new_fake[v,:,:,:] = vvh
-                            v = v + 1
+
+                        #issuess  with nearest
+
+                        # for i in fake:
+                        #     print("inside")
+                        #     print(i.shape)
+                        #     vvh = torch.nn.functional.interpolate(i,size=(32,32), mode='linear')
+                        #     print(type(vvh))
+                        #     print(vvh.shape)
+                        #     new_fake[v,:,:,:] = vvh
+                        #     v = v + 1
+
+                        new_image = torch.nn.functional.interpolate(fake ,size=(3,32,32), mode='nearest')
+
+                        print(new_image.shape)
 
 
-                        vutils.save_image(k.detach(),
+                        vutils.save_image(new_image.detach(),
                                     'output/fake_samples_epoch_%03_%03d.png' % epoch,
                                     normalize=True)
                         #fake = self.netG(fixed_noisev)
