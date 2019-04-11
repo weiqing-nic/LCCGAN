@@ -372,7 +372,10 @@ class Trainer(object):
                         for i in fake:
                             print("inside")
                             print(i.shape)
-                            new_fake[v,:,:,:] = torch.nn.functional.interpolate(i,size=[(32,32)])
+                            vvh = torch.nn.functional.interpolate(i,size=[(32,32)])
+                            print(type(vvh))
+                            print(vvh.shape)
+                            new_fake[v,:,:,:] = vvh
                             v = v + 1
 
 
