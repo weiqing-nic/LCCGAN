@@ -395,7 +395,7 @@ class Trainer(object):
                         #     v = v + 1
 
 
-                        vutils.save_image(k,
+                        vutils.save_image(k.detach(),
                                     'output/fake_samples_epoch_%03_%03d.png' % epoch,
                                     normalize=True)
                         #fake = self.netG(fixed_noisev)
