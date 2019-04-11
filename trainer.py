@@ -369,7 +369,7 @@ class Trainer(object):
                         print("new fake size")
                         print(new_fake.shape)
                         new_fake = new_fake.numpy()
-                        data = np.transpose(new_fake, (1, 2, 3, 0)) # put height and width in front
+                        data = np.transpose(new_fake, (2, 3, 1, 0)) # put height and width in front
                         print(data.shape)
                         data = skimage.transform.resize(data.reshape(64, 64, -1), (32, 32))
                         print("after downsample")
@@ -383,7 +383,7 @@ class Trainer(object):
 
                         k = torch.from_numpy(data)
                         print("k")
-                        print(k.type)
+                        print(k)
                         #for i in fake.detach():
                         # for i in fake:
                         #     print("inside")
