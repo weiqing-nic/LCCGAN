@@ -383,7 +383,7 @@ class Trainer(object):
 
                         k = torch.from_numpy(data)
                         print("k")
-                        print(k)
+                        print(type(k))
                         #for i in fake.detach():
                         # for i in fake:
                         #     print("inside")
