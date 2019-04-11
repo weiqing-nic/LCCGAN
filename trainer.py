@@ -370,6 +370,7 @@ class Trainer(object):
                         print(new_fake.shape)
                         new_fake = new_fake.numpy()
                         data = np.transpose(new_fake, (1, 2, 3, 0)) # put height and width in front
+                        print(data.shape)
                         data = skimage.transform.resize(data, (28, 28))
                         data = np.transpose(data, (3, 0, 1, 2) )
 
