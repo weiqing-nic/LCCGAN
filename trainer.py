@@ -359,7 +359,7 @@ class Trainer(object):
                         #        normalize=True)
 
 
-                        torch.nn.functional.interpolate(fake, size=[(32,32)], scale_factor=None, mode='nearest', align_corners=None)
+                        torch.nn.functional.interpolate(fake, size=(32,32), scale_factor=None, mode='nearest', align_corners=None)
 
 
                         vutils.save_image(lis,
