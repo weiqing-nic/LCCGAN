@@ -406,7 +406,7 @@ class Trainer(object):
                         print(new_image.shape)
 
 
-                        vutils.save_image(new_image.detach(),
+                        vutils.save_image(new_image,
                                     'output/fake_samples_epoch_%03_%03d.png' % epoch,
                                     normalize=True)
                         #fake = self.netG(fixed_noisev)
