@@ -2,7 +2,7 @@ from opt import opt
 import os
 import random
 import torch
-
+import skimage
 import torch.nn as nn
 import torch.autograd as autograd
 import torch.nn.parallel
@@ -368,18 +368,24 @@ class Trainer(object):
                         new_fake = torch.rand(64,3,64,64)
                         print("new fake size")
                         print(new_fake.shape)
+                        new_fake = new_fake.numpy()
+                        data = np.transpose(new_fake, (1, 2, 3, 0)) # put height and width in front
+                        data = skimage.transform.resize(data, (28, 28))
+                        data = np.transpose(data, (3, 0, 1, 2) )
+
+                        k = torch.from_numpy(data)
                         #for i in fake.detach():
-                        for i in fake:
-                            print("inside")
-                            print(i.shape)
-                            vvh = torch.nn.functional.interpolate(i,size=(32,32))
-                            print(type(vvh))
-                            print(vvh.shape)
-                            new_fake[v,:,:,:] = vvh
-                            v = v + 1
+                        # for i in fake:
+                        #     print("inside")
+                        #     print(i.shape)
+                        #     vvh = torch.nn.functional.interpolate(i,size=[(32,32)])
+                        #     print(type(vvh))
+                        #     print(vvh.shape)
+                        #     new_fake[v,:,:,:] = vvh
+                        #     v = v + 1
 
 
-                        vutils.save_image(new_fake.detach(),
+                        vutils.save_image(k.detach(),
                                     'output/fake_samples_epoch_%03_%03d.png' % epoch,
                                     normalize=True)
                         #fake = self.netG(fixed_noisev)
