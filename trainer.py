@@ -358,10 +358,8 @@ class Trainer(object):
                         #        'output/real_samples.png',
                         #        normalize=True)
 
-                        lis = []
-                        for vh in fake:
-                            torch.nn.functional.interpolate(vh, size=[32,32], scale_factor=None, mode='nearest', align_corners=None)
-                            lis.append(vh)
+
+                        torch.nn.functional.interpolate(fake, size=[[32,32]], scale_factor=None, mode='nearest', align_corners=None)
 
 
                             vutils.save_image(lis,
