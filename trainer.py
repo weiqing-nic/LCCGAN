@@ -365,7 +365,7 @@ class Trainer(object):
                         v = int(0)
                         new_fake = fake
                         for i in fake.detach():
-                            new_fake[v] = torch.nn.functional.interpolate(fake, size=(32,32), scale_factor=None, mode='nearest', align_corners=None)
+                            new_fake[v] = torch.nn.functional.interpolate(fake, size=(64,3,32,32), scale_factor=None, mode='nearest', align_corners=None)
                             v = v + 1
 
 
