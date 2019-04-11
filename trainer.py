@@ -359,10 +359,9 @@ class Trainer(object):
                         #        normalize=True)
 
                         lis = []
-                        for i in fake.detach():
-                            v = i
-                            torch.nn.functional.interpolate(v, size=[32,32], scale_factor=None, mode='nearest', align_corners=None)
-                            lis.append(v)
+                        for vh in fake:
+                            torch.nn.functional.interpolate(vh, size=[32,32], scale_factor=None, mode='nearest', align_corners=None)
+                            lis.append(vh)
 
 
                             vutils.save_image(lis,
