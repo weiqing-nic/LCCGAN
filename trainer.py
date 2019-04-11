@@ -2,6 +2,7 @@ from opt import opt
 import os
 import random
 import torch
+
 import torch.nn as nn
 import torch.autograd as autograd
 import torch.nn.parallel
@@ -371,7 +372,7 @@ class Trainer(object):
                         for i in fake:
                             print("inside")
                             print(i.shape)
-                            new_fake[v,:,:,:] = torch.nn.upsampling(i,(32,32))
+                            new_fake[v,:,:,:] = torch.nn.functional.interpolate(i,(32,32))
                             v = v + 1
 
 
