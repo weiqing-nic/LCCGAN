@@ -173,6 +173,7 @@ class Trainer(object):
         for epoch in tqdm(range(self.opt.niter1), desc="Stage 1"):
             for i, data in enumerate(self.dataloader, 0):
                 real_cpu, _ = data
+                vvh = torch.nn.functional.interpolate(i,size=(32,32))
                 batch_size = real_cpu.size(0)
                 if batch_size < opt.batchSize_s1:
                     print("hello")
