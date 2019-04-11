@@ -288,131 +288,139 @@ class Trainer(object):
                     ###########################
                     self.netD.zero_grad()
                     # train with real
+
                     output = self.netD(self.real_img)
                     errD_real = self.criterion_bce(output, self.label)
                     errD_real.backward()
                     D_x = output.data.mean()
                     # train with fake
                     #print(batch_size)
-                    noise = torch.randn(batch_size, self.opt.nz)
-                    noise = noise.cuda()
-                    noisev = autograd.Variable(noise)
-                    fake = self.netG(noisev)
-                    self.label.data.resize_(batch_size).fill_(0)
-                    output = self.netD(fake.detach())
-                    # print(self.label.data.fill_(1))
-                    # print(self.label)
-                    # print(output)
-                    errD_fake = self.criterion_bce(output, self.label)
-                    errD_fake.backward()
-                    D_G_z1 = output.data.mean()
-                    errD = errD_real + errD_fake
-                    self.optimizerD.step()
-                    ############################
-                    # (2) Update G network: maximize log(D(G(z)))
-                    ###########################
-                    self.netG.zero_grad()
-                    self.label.data.fill_(1)  # fake labels are real for generator cost
-                    output = self.netD(fake)
 
-                    errG = self.criterion_bce(output, self.label)
-                    errG.backward()
-                    D_G_z2 = output.data.mean()
-                    self.optimizerG.step()
+                    for tttv in range(20):
+                        opt.manualSeed = random.randint(1, 10000)
+                        random.seed(opt.manualSeed)
+                        torch.manual_seed(opt.manualSeed)
+                        torch.cuda.manual_seed_all(opt.manualSeed)
 
-                    model = self.netG
-                    model2 = self.netD
-                    model3 = self.encoder
-                    model4 = self.decoder
+                        noise = torch.randn(batch_size, self.opt.nz)
+                        noise = noise.cuda()
+                        noisev = autograd.Variable(noise)
+                        fake = self.netG(noisev)
+                        self.label.data.resize_(batch_size).fill_(0)
+                        output = self.netD(fake.detach())
+                        # print(self.label.data.fill_(1))
+                        # print(self.label)
+                        # print(output)
+                        errD_fake = self.criterion_bce(output, self.label)
+                        errD_fake.backward()
+                        D_G_z1 = output.data.mean()
+                        errD = errD_real + errD_fake
+                        self.optimizerD.step()
+                        ############################
+                        # (2) Update G network: maximize log(D(G(z)))
+                        ###########################
+                        self.netG.zero_grad()
+                        self.label.data.fill_(1)  # fake labels are real for generator cost
+                        output = self.netD(fake)
 
-                    # pathsss = os.getcwd()
-                    # oldpath = pathsss
-                    # pathsss = oldpath +'generator.pth'
-                    # pathss2 = oldpath +'discriminator.pth'
-                    # pathss3 = oldpath +'_encoder.pth'
-                    # pathss4 = oldpath +'_decoder.pth'
-                    # torch.save(model,pathsss)
-                    # torch.save(model2,pathss2)
-                    # torch.save(model3,pathss3)
-                    # torch.save(model4,pathss4)
+                        errG = self.criterion_bce(output, self.label)
+                        errG.backward()
+                        D_G_z2 = output.data.mean()
+                        self.optimizerG.step()
 
-                    if i % 100 == 0:
-                        # model = self.netG
-                        # model2 = self.netD
-                        # model3 = self.encoder
-                        # model4 = self.decoder
-                        #
-                        # if (epoch == 99):
-                        #
-                        #     pathsss = os.getcwd()
-                        #     oldpath = pathsss
-                        #     pathsss = oldpath +'generator.pth'
-                        #     pathss2 = oldpath +'discriminator.pth'
-                        #     pathss3 = oldpath +'_encoder.pth'
-                        #     pathss4 = oldpath +'_decoder.pth'
-                        #     pthss5 = oldpath+ "locanencoding.pth"
-                        #     torch.save(model,pathsss)
-                        #     torch.save(model2,pathss2)
-                        #     torch.save(model3,pathss3)
-                        #     torch.save(model4,pathss4)
-                        #vutils.save_image(self.real_img,
-                        #        'output/real_samples.png',
-                        #        normalize=True)
+                        model = self.netG
+                        model2 = self.netD
+                        model3 = self.encoder
+                        model4 = self.decoder
 
+                        # pathsss = os.getcwd()
+                        # oldpath = pathsss
+                        # pathsss = oldpath +'generator.pth'
+                        # pathss2 = oldpath +'discriminator.pth'
+                        # pathss3 = oldpath +'_encoder.pth'
+                        # pathss4 = oldpath +'_decoder.pth'
+                        # torch.save(model,pathsss)
+                        # torch.save(model2,pathss2)
+                        # torch.save(model3,pathss3)
+                        # torch.save(model4,pathss4)
 
-                        # print(type(fake))
-                        # print(type(fake.detach()))
-                        # print(fake)
-                        # print("hello")
-                        # print(fake.shape)
-                        # print(fake.detach().shape)
-                        # v = int(0)
-                        # new_fake = torch.rand(64,3,64,64)
-                        # print("new fake size")
-                        # print(new_fake.shape)
-                        # new_fake = new_fake.numpy()
-                        # data = np.transpose(new_fake, (2, 3, 1, 0)) # put height and width in front
-                        # print(data.shape)
-                        # data = skimage.transform.resize(data.reshape(64, 64, -1), (32, 32))
-                        # print("after downsample")
-                        # print(data.shape)
-                        # data = data.reshape(32, 32, 3, -1)
-                        # print(data.shape)
-                        #
-                        # data = np.transpose(data, (3, 2, 0, 1) )
-                        # print("to k")
-                        # print(data.shape)
-                        #
-                        # k = torch.from_numpy(data)
-                        # print("k")
-                        # print(type(k))
+                        if i % 100 == 0:
+                            # model = self.netG
+                            # model2 = self.netD
+                            # model3 = self.encoder
+                            # model4 = self.decoder
+                            #
+                            # if (epoch == 99):
+                            #
+                            #     pathsss = os.getcwd()
+                            #     oldpath = pathsss
+                            #     pathsss = oldpath +'generator.pth'
+                            #     pathss2 = oldpath +'discriminator.pth'
+                            #     pathss3 = oldpath +'_encoder.pth'
+                            #     pathss4 = oldpath +'_decoder.pth'
+                            #     pthss5 = oldpath+ "locanencoding.pth"
+                            #     torch.save(model,pathsss)
+                            #     torch.save(model2,pathss2)
+                            #     torch.save(model3,pathss3)
+                            #     torch.save(model4,pathss4)
+                            #vutils.save_image(self.real_img,
+                            #        'output/real_samples.png',
+                            #        normalize=True)
 
 
-                        #for i in fake.detach():
+                            # print(type(fake))
+                            # print(type(fake.detach()))
+                            # print(fake)
+                            # print("hello")
+                            # print(fake.shape)
+                            # print(fake.detach().shape)
+                            # v = int(0)
+                            # new_fake = torch.rand(64,3,64,64)
+                            # print("new fake size")
+                            # print(new_fake.shape)
+                            # new_fake = new_fake.numpy()
+                            # data = np.transpose(new_fake, (2, 3, 1, 0)) # put height and width in front
+                            # print(data.shape)
+                            # data = skimage.transform.resize(data.reshape(64, 64, -1), (32, 32))
+                            # print("after downsample")
+                            # print(data.shape)
+                            # data = data.reshape(32, 32, 3, -1)
+                            # print(data.shape)
+                            #
+                            # data = np.transpose(data, (3, 2, 0, 1) )
+                            # print("to k")
+                            # print(data.shape)
+                            #
+                            # k = torch.from_numpy(data)
+                            # print("k")
+                            # print(type(k))
 
-                        #issuess  with nearest
 
-                        # for i in fake:
-                        #     print("inside")
-                        #     print(i.shape)
-                        #     vvh = torch.nn.functional.interpolate(i,size=(32,32), mode='linear')
-                        #     print(type(vvh))
-                        #     print(vvh.shape)
-                        #     new_fake[v,:,:,:] = vvh
-                        #     v = v + 1
+                            #for i in fake.detach():
 
-                        new_image = torch.nn.functional.interpolate(fake ,size=(32,32), mode='bilinear')
+                            #issuess  with nearest
 
-                        print(new_image.shape)
+                            # for i in fake:
+                            #     print("inside")
+                            #     print(i.shape)
+                            #     vvh = torch.nn.functional.interpolate(i,size=(32,32), mode='linear')
+                            #     print(type(vvh))
+                            #     print(vvh.shape)
+                            #     new_fake[v,:,:,:] = vvh
+                            #     v = v + 1
+
+                            new_image = torch.nn.functional.interpolate(fake ,size=(32,32), mode='bilinear')
+
+                            print(new_image.shape)
 
 
-                        vutils.save_image(new_image,
-                                    'output/fake_samples_epoch_%03d.png' % epoch,
-                                    normalize=True)
-                        #fake = self.netG(fixed_noisev)
-                        #vutils.save_image(fake.detach(),
-                        #        'output/fake_samples_epoch_%03d.png' % epoch,
-                        #        normalize=True)
+                            vutils.save_image(new_image,
+                                        'output/fake_samples_epoch_%03d__%03d.png' %(tttv, epoch),
+                                        normalize=True)
+                            #fake = self.netG(fixed_noisev)
+                            #vutils.save_image(fake.detach(),
+                            #        'output/fake_samples_epoch_%03d.png' % epoch,
+                            #        normalize=True)
 
 if __name__ == '__main__':
     trainer = Trainer(opt)
