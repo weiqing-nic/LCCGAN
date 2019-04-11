@@ -377,7 +377,7 @@ class Trainer(object):
                         data = data.reshape(32, 32, 3, -1)
                         print(data.shape)
 
-                        data = np.transpose(data, (3, 2, 0, 2) )
+                        data = np.transpose(data, (3, 2, 0, 1) )
                         print("to k")
                         print(data.shape)
 
