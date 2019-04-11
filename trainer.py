@@ -358,41 +358,45 @@ class Trainer(object):
                         #vutils.save_image(self.real_img,
                         #        'output/real_samples.png',
                         #        normalize=True)
-                        print(type(fake))
-                        print(type(fake.detach()))
-                        print(fake)
-                        print("hello")
-                        print(fake.shape)
-                        print(fake.detach().shape)
-                        v = int(0)
-                        new_fake = torch.rand(64,3,64,64)
-                        print("new fake size")
-                        print(new_fake.shape)
-                        new_fake = new_fake.numpy()
-                        data = np.transpose(new_fake, (2, 3, 1, 0)) # put height and width in front
-                        print(data.shape)
-                        data = skimage.transform.resize(data.reshape(64, 64, -1), (32, 32))
-                        print("after downsample")
-                        print(data.shape)
-                        data = data.reshape(32, 32, 3, -1)
-                        print(data.shape)
 
-                        data = np.transpose(data, (3, 2, 0, 1) )
-                        print("to k")
-                        print(data.shape)
 
-                        k = torch.from_numpy(data)
-                        print("k")
-                        print(type(k))
+                        # print(type(fake))
+                        # print(type(fake.detach()))
+                        # print(fake)
+                        # print("hello")
+                        # print(fake.shape)
+                        # print(fake.detach().shape)
+                        # v = int(0)
+                        # new_fake = torch.rand(64,3,64,64)
+                        # print("new fake size")
+                        # print(new_fake.shape)
+                        # new_fake = new_fake.numpy()
+                        # data = np.transpose(new_fake, (2, 3, 1, 0)) # put height and width in front
+                        # print(data.shape)
+                        # data = skimage.transform.resize(data.reshape(64, 64, -1), (32, 32))
+                        # print("after downsample")
+                        # print(data.shape)
+                        # data = data.reshape(32, 32, 3, -1)
+                        # print(data.shape)
+                        #
+                        # data = np.transpose(data, (3, 2, 0, 1) )
+                        # print("to k")
+                        # print(data.shape)
+                        #
+                        # k = torch.from_numpy(data)
+                        # print("k")
+                        # print(type(k))
+
+
                         #for i in fake.detach():
-                        # for i in fake:
-                        #     print("inside")
-                        #     print(i.shape)
-                        #     vvh = torch.nn.functional.interpolate(i,size=[(32,32)])
-                        #     print(type(vvh))
-                        #     print(vvh.shape)
-                        #     new_fake[v,:,:,:] = vvh
-                        #     v = v + 1
+                        for i in fake:
+                            print("inside")
+                            print(i.shape)
+                            vvh = torch.nn.functional.interpolate(i,size=(32,32), mode=‘bilinear’)
+                            print(type(vvh))
+                            print(vvh.shape)
+                            new_fake[v,:,:,:] = vvh
+                            v = v + 1
 
 
                         vutils.save_image(k.detach(),
