@@ -362,14 +362,20 @@ class Trainer(object):
                         print(fake)
                         print("hello")
                         print(fake.shape)
+                        print(fake.detach().shape)
                         v = int(0)
-                        new_fake = fake
-                        for i in fake.detach():
-                            new_fake[v] = torch.nn.functional.interpolate(fake, size=(64,3,32,32), scale_factor=None, mode='nearest', align_corners=None)
+                        new_fake = torch.rand(64,3,64,64)
+                        print("new fake size")
+                        print(new_fake.shape)
+                        #for i in fake.detach():
+                        for i in fake:
+                            print("inside")
+                            print(i.shape)
+                            new_fake[v:::] =torchvision.transforms.Resize((32,32), interpolation=2)
                             v = v + 1
 
 
-                        vutils.save_image(new_fake,
+                        vutils.save_image(new_fake.detach(),
                                     'output/fake_samples_epoch_%03_%03d.png' % epoch,
                                     normalize=True)
                         #fake = self.netG(fixed_noisev)
