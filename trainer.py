@@ -49,8 +49,9 @@ def createDataSet(opt, imageSize):
         dataset = dset.MNIST(root=opt.dataroot, download=True,
                                transform=transforms.Compose([
                                    transforms.Scale(imageSize),
+                                   transforms.Grayscale(3),
                                    transforms.ToTensor(),
-                                   transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+                                   transforms.Normalize((0.5, ), (0.5, )),
                                ])
         )
     elif opt.dataset == 'cifar10':
@@ -252,12 +253,13 @@ class Trainer(object):
             noise = noise.cuda()
             noisev = autograd.Variable(noise)
             fake = self.netG(noisev)
-            patths = "/home/yoweiqing/LCCGANgenerator.pth"
+            patths = "/home/yoweiqing/"
+            self.netG = _netG(opt.basis_num, opt.embedding_dim, opt.nz, opt.ngf, opt.nc) 
+            #self.netG = _netG(128, opt.embedding_dim, 3, 64, 64)
+            print("geterroe")
 
-            model9 = self.netG = _netG(opt.basis_num, opt.embedding_dim, opt.nz, opt.ngf, opt.nc)
 
-
-            loadmodel = torch.load(patths)
+           # loadmodel = torch.load(patths)
 
 
 
@@ -268,7 +270,9 @@ class Trainer(object):
             shuffle=True, num_workers=int(self.opt.workers))
             counter_s3 = 0
             # some hack, Eric Han
-            self.netG = loadmodel
+            
+            #self.netG = loadmodel
+            
             #batch_size = real_cpu.size(0)
             #fixed_noise = torch.randn(batch_size, self.opt.nz, 1, 1)
             #fixed_noise = fixed_noise.cuda()
@@ -290,17 +294,21 @@ class Trainer(object):
                     # train with real
 
                     output = self.netD(self.real_img)
+
+                    #print("erroe ehhehehee")
                     errD_real = self.criterion_bce(output, self.label)
                     errD_real.backward()
                     D_x = output.data.mean()
+                    #print("error output")
+
                     # train with fake
                     #print(batch_size)
 
-                    for tttv in range(20):
-                        opt.manualSeed = random.randint(1, 10000)
-                        random.seed(opt.manualSeed)
-                        torch.manual_seed(opt.manualSeed)
-                        torch.cuda.manual_seed_all(opt.manualSeed)
+                    for tttv in range(1):
+                        #opt.manualSeed = random.randint(1, 10000)
+                        #random.seed(opt.manualSeed)
+                        #torch.manual_seed(opt.manualSeed)
+                        #torch.cuda.manual_seed_all(opt.manualSeed)
 
                         noise = torch.randn(batch_size, self.opt.nz)
                         noise = noise.cuda()
@@ -333,39 +341,39 @@ class Trainer(object):
                         model3 = self.encoder
                         model4 = self.decoder
 
-                        # pathsss = os.getcwd()
-                        # oldpath = pathsss
-                        # pathsss = oldpath +'generator.pth'
-                        # pathss2 = oldpath +'discriminator.pth'
-                        # pathss3 = oldpath +'_encoder.pth'
-                        # pathss4 = oldpath +'_decoder.pth'
-                        # torch.save(model,pathsss)
-                        # torch.save(model2,pathss2)
-                        # torch.save(model3,pathss3)
-                        # torch.save(model4,pathss4)
+                         #pathsss = os.getcwd()
+                         #oldpath = pathsss
+                         #pathsss = oldpath +'ggenerator.pth'
+                         #pathss2 = oldpath +'ddiscriminator.pth'
+                         #pathss3 = oldpath +'_encoder.pth'
+                         #pathss4 = oldpath +'_decoder.pth'
+                         #torch.save(model,pathsss)
+                         #torch.save(model2,pathss2)
+                         #torch.save(model3,pathss3)
+                         #torch.save(model4,pathss4)
 
                         if i % 100 == 0:
-                            # model = self.netG
-                            # model2 = self.netD
-                            # model3 = self.encoder
-                            # model4 = self.decoder
+                             model = self.netG
+                             model2 = self.netD
+                             model3 = self.encoder
+                             model4 = self.decoder
                             #
-                            # if (epoch == 99):
+                             if (epoch == 99):
                             #
-                            #     pathsss = os.getcwd()
-                            #     oldpath = pathsss
-                            #     pathsss = oldpath +'generator.pth'
-                            #     pathss2 = oldpath +'discriminator.pth'
-                            #     pathss3 = oldpath +'_encoder.pth'
-                            #     pathss4 = oldpath +'_decoder.pth'
-                            #     pthss5 = oldpath+ "locanencoding.pth"
-                            #     torch.save(model,pathsss)
-                            #     torch.save(model2,pathss2)
-                            #     torch.save(model3,pathss3)
-                            #     torch.save(model4,pathss4)
-                            #vutils.save_image(self.real_img,
-                            #        'output/real_samples.png',
-                            #        normalize=True)
+                                pathsss = os.getcwd()
+                                oldpath = pathsss
+                                pathsss = oldpath +'fgenerator.pth'
+                                pathss2 = oldpath +'discriminator.pth'
+                                pathss3 = oldpath +'_encoder.pth'
+                                pathss4 = oldpath +'_decoder.pth'
+                                pthss5 = oldpath+ "locanencoding.pth"
+                                torch.save(model,pathsss)
+                                torch.save(model2,pathss2)
+                                torch.save(model3,pathss3)
+                                torch.save(model4,pathss4)
+                                vutils.save_image(self.real_img,
+                                    'output/real_samples.png',
+                                    normalize=True)
 
 
                             # print(type(fake))
@@ -409,12 +417,12 @@ class Trainer(object):
                             #     new_fake[v,:,:,:] = vvh
                             #     v = v + 1
 
-                            new_image = torch.nn.functional.interpolate(fake ,size=(32,32), mode='bilinear')
+                             new_image = torch.nn.functional.interpolate(fake ,size=(32,32), mode='bilinear')
 
-                            print(new_image.shape)
+                             print(new_image.shape)
 
 
-                            vutils.save_image(new_image,
+                             vutils.save_image(new_image,
                                         'output/fake_samples_epoch_%03d__%03d.png' %(tttv, epoch),
                                         normalize=True)
                             #fake = self.netG(fixed_noisev)
