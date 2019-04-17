@@ -254,7 +254,7 @@ class Trainer(object):
             noisev = autograd.Variable(noise)
             fake = self.netG(noisev)
             patths = "/home/yoweiqing/"
-            self.netG = _netG(opt.basis_num, opt.embedding_dim, opt.nz, opt.ngf, opt.nc) 
+            self.netG = _netG(opt.basis_num, opt.embedding_dim, opt.nz, opt.ngf, opt.nc)
             #self.netG = _netG(128, opt.embedding_dim, 3, 64, 64)
             print("geterroe")
 
@@ -270,9 +270,9 @@ class Trainer(object):
             shuffle=True, num_workers=int(self.opt.workers))
             counter_s3 = 0
             # some hack, Eric Han
-            
+
             #self.netG = loadmodel
-            
+
             #batch_size = real_cpu.size(0)
             #fixed_noise = torch.randn(batch_size, self.opt.nz, 1, 1)
             #fixed_noise = fixed_noise.cuda()
@@ -305,10 +305,10 @@ class Trainer(object):
                     #print(batch_size)
 
                     for tttv in range(1):
-                        #opt.manualSeed = random.randint(1, 10000)
-                        #random.seed(opt.manualSeed)
-                        #torch.manual_seed(opt.manualSeed)
-                        #torch.cuda.manual_seed_all(opt.manualSeed)
+                        opt.manualSeed = random.randint(1, 10000)
+                        random.seed(opt.manualSeed)
+                        torch.manual_seed(opt.manualSeed)
+                        torch.cuda.manual_seed_all(opt.manualSeed)
 
                         noise = torch.randn(batch_size, self.opt.nz)
                         noise = noise.cuda()
